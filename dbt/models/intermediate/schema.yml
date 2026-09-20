@@ -1,0 +1,131 @@
+version: 2
+
+models:
+  - name: int_station_identity
+    description: >
+      Resolves Citi Bike source station identifiers to the canonical GBFS
+      station identifier used by dim_station.
+
+    columns:
+      - name: source_station_code
+        description: Original station identifier from Citi Bike trip data.
+        tests:
+          - not_null
+          - unique
+
+      - name: mapping_method
+        description: Method used to resolve the source station identifier.
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - EXACT_SHORT_NAME
+                  - NUMERIC_SHORT_NAME
+                  - NAME_COORDINATE
+
+      - name: mapping_status
+        description: Whether the source station identifier was resolved.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - MATCHED
+                  - UNRESOLVED
+
+  - name: int_trip_history
+    description: >
+      Trip history with derived trip attributes, business validation results,
+      and resolved station keys.
+
+    columns:
+      - name: started_at
+        tests:
+          - not_null
+
+      - name: ended_at
+        tests:
+          - not_null
+
+      - name: start_date
+        tests:
+          - not_null
+
+      - name: end_date
+        tests:
+          - not_null
+
+      - name: start_hour
+        tests:
+          - not_null
+
+      - name: member_casual
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - member
+                  - casual
+
+      - name: is_valid_trip
+        tests:
+          - not_null
+
+      - name: source_month
+        tests:
+          - not_null
+
+      - name: batch_id
+        tests:
+          - not_null
+
+  - name: int_quarantine_trip
+    description: >
+      Trip records that failed business validation in int_trip_history.
+
+    columns:
+      - name: quarantine_id
+        tests:
+          - not_null
+          - unique
+
+      - name: batch_id
+        tests:
+          - not_null
+
+      - name: quarantined_at
+        tests:
+          - not_null
+
+  - name: int_station_status
+    description: >
+      Validated and deduplicated station status observations from the streaming
+      station status source.
+
+    columns:
+      - name: station_id
+        tests:
+          - not_null
+
+      - name: snapshot_id
+        tests:
+          - not_null
+
+      - name: is_valid
+        tests:
+          - not_null
+
+  - name: int_quarantine_station_status
+    description: >
+      Station status observations that failed business validation in
+      int_station_status.
+
+    columns:
+      - name: quarantine_id
+        tests:
+          - not_null
+          - unique
+
+      - name: invalid_at
+        tests:
+          - not_null

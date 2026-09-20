@@ -1,0 +1,10 @@
+sources:
+  - name: raw
+    database: jcdeah-009
+    schema: citibike_raw
+    tables:
+      - name: trip_history
+      - name: station_information
+      - name: station_status
+
+    

@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: stg_trip_history
+    description: "Cleaned Citi Bike trip history from the raw layer."
+
+    columns:
+      - name: ride_id
+        description: "Unique identifier for the trip."
+        data_tests:
+          - not_null
+
+      - name: started_at
+        description: "Trip start timestamp."
+        data_tests:
+          - not_null
+
+      - name: ended_at
+        description: "Trip end timestamp."
+        data_tests:
+          - not_null
+
+      - name: member_casual
+        description: "Rider membership type."
+        data_tests:
+          - not_null
+
+  - name: stg_station_information
+    description: "Cleaned Citi Bike station information from the raw layer."
+
+    columns:
+      - name: station_id
+        description: "Citi Bike station identifier."
+        data_tests:
+          - not_null
+
+      - name: station_name
+        description: "Station name."
+
+      - name: latitude
+        description: "Station latitude."
+
+      - name: longitude
+        description: "Station longitude."
+
+      - name: snapshot_date
+        description: "Date when the station information snapshot was captured."
+        data_tests:
+          - not_null
+
+  - name: stg_station_status
+    description: "Cleaned Citi Bike station status observations from the raw streaming."
+
+    columns:
+      - name: station_id
+        description: "Citi Bike station identifier from the streaming source."
+        data_tests:
+          - not_null
+
+      - name: snapshot_id
+        description: "Identifier of the polling snapshot containing the observation."
+        data_tests:
+          - not_null
+
+      - name: poll_time
+        description: "Timestamp when the station status was polled."
+        data_tests:
+          - not_null

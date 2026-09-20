@@ -1,0 +1,27 @@
+name: "citibike"
+version: "1.0.0"
+
+profile: "citibike"
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  citibike:
+    staging:
+      +materialized: view
+      +schema: citibike_staging
+    intermediate:
+      +materialized: view
+      +schema: citibike_intermediate
+    mart:
+      +materialized: table
+      +schema: citibike_mart

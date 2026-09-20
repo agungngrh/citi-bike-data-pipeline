@@ -1,0 +1,108 @@
+version: 2
+
+models:
+
+  - name: dim_date
+    description: "Shared date dimension for trip and station facts."
+
+    columns:
+      - name: date_key
+        description: "Date key in YYYYMMDD format."
+        tests:
+          - not_null
+          - unique
+
+      - name: full_date
+        description: "Calendar date."
+        tests:
+          - not_null
+
+  - name: dim_station
+    description: "Current station dimension shared by trip and station facts."
+
+    columns:
+      - name: station_key
+        description: "Station key used by fact tables."
+        tests:
+          - not_null
+          - unique
+
+      - name: station_id
+        description: "Canonical Citi Bike station ID."
+        tests:
+          - not_null
+
+  - name: fct_trip
+    description: "Validated trip fact with one row per trip."
+
+    columns:
+      - name: ride_id
+        description: "Unique trip ID."
+        tests:
+          - not_null
+          - unique
+
+      - name: start_date_key
+        description: "Trip start date key."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: end_date_key
+        description: "Trip end date key."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: start_station_key
+        description: "Start station key; NULL if unresolved."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_station')
+                field: station_key
+
+      - name: end_station_key
+        description: "End station key; NULL if unresolved."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_station')
+                field: station_key
+
+  - name: fct_station_status
+    description: "Station status fact with one row per observation."
+
+    columns:
+      - name: station_id
+        description: "Citi Bike station ID."
+        tests:
+          - not_null
+
+      - name: station_key
+        description: "Station key from dim_station; NULL if unresolved."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_station')
+                field: station_key
+
+      - name: snapshot_id
+        description: "Polling snapshot ID."
+        tests:
+          - not_null
+
+      - name: observation_date_key
+        description: "Station observation date key."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
